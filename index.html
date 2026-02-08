@@ -246,155 +246,79 @@
             line-height: 1.5;
         }
 
-        /* Progress Bar */
-        .progress-wrapper {
-            width: 100%;
-            max-width: 400px;
-            background-color: #e0e0e0;
-            border-radius: 4px;
-            height: 10px;
-            overflow: hidden;
-            margin-bottom: 12px;
-        }
-
-        .progress-bar {
-            height: 100%;
-            width: 0%;
-            background-color: var(--wu-yellow);
-            transition: width 0.2s linear;
-        }
-
-        .progress-status {
-            font-size: 14px;
-            color: var(--wu-grey);
-        }
-
-        /* Transcript Page */
-        .transcript-page {
-            display: none;
-            padding: 24px 16px;
-            max-width: 800px;
-            margin: 0 auto;
-        }
-
-        .transcript-header {
-            border-bottom: 1px solid #ccc;
-            padding-bottom: 10px;
-            margin-bottom: 20px;
-        }
-
-        .transcript-item {
-            padding: 16px;
-            border-left: 4px solid #e0e0e0;
-            margin-bottom: 16px;
-            background: #f9f9f9;
-        }
-
-        .transcript-item.active {
-            border-left-color: var(--wu-blue);
-            background: #f0f7ff;
-        }
-
-        .transcript-status {
-            font-weight: 500;
-            margin-bottom: 4px;
-            font-size: 16px;
-        }
-
-        .transcript-date {
-            font-size: 14px;
-            color: var(--wu-grey);
-        }
-
-        /* Bank Details Page */
-        .bank-details-page {
-            display: none;
-            padding: 24px 16px;
-            max-width: 800px;
-            margin: 0 auto;
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-            text-align: left;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 500;
-            color: var(--wu-black);
-        }
-
-        .wu-input, .wu-select {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            font-size: 16px;
-            box-sizing: border-box; /* Ensures padding doesn't affect width */
-        }
-
-        .wu-input:focus, .wu-select:focus {
-            border-color: var(--wu-blue);
-            outline: none;
-        }
-
-        /* Popup Modal */
-        .modal-overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            z-index: 2000;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .modal-content {
-            background-color: white;
-            padding: 24px;
-            border-radius: 8px;
-            max-width: 90%;
-            width: 400px;
-            text-align: center;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-        }
-
-        .modal-icon {
-            font-size: 40px;
-            margin-bottom: 16px;
-        }
-
-        .modal-title {
-            font-size: 20px;
-            font-weight: bold;
-            margin-bottom: 12px;
-        }
-
-        .modal-body {
-            font-size: 16px;
-            margin-bottom: 24px;
-            line-height: 1.5;
-        }
-
-        .boost-btn {
-            background-color: var(--wu-yellow);
-            color: var(--wu-black);
-            font-weight: bold;
-            border: none;
-            padding: 14px;
-            width: 100%;
-            border-radius: 25px;
-            cursor: pointer;
-            font-size: 16px;
+        /* Receipt Page Styles */
+        .receipt-page {
+             display: none;
+             padding: 24px 16px;
+             max-width: 800px;
+             margin: 0 auto;
+             text-align: center;
         }
         
-        .boost-btn:hover {
-            background-color: #e6c300;
+        .receipt-container {
+            margin-bottom: 24px;
+            border: 1px solid #e0e0e0;
+            padding: 16px;
+            background: #f9f9f9;
+            border-radius: 8px;
+        }
+        
+        .receipt-image {
+            width: 100%;
+            max-width: 500px;
+            height: auto;
+            display: block;
+            margin: 0 auto;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .print-button-container {
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        /* Toast Notification Styles */
+        #toast-notification {
+            visibility: hidden;
+            min-width: 280px;
+            margin-left: -140px; 
+            background-color: #222;
+            color: #fff;
+            text-align: center;
+            border-radius: 4px;
+            padding: 16px;
+            position: fixed;
+            z-index: 3000;
+            left: 50%;
+            bottom: 30px;
+            font-size: 15px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+
+        #toast-notification.show {
+            visibility: visible;
+            -webkit-animation: fadein 0.5s, fadeout 0.5s 3.5s;
+            animation: fadein 0.5s, fadeout 0.5s 3.5s;
+        }
+
+        @-webkit-keyframes fadein {
+            from {bottom: 0; opacity: 0;}
+            to {bottom: 30px; opacity: 1;}
+        }
+
+        @keyframes fadein {
+            from {bottom: 0; opacity: 0;}
+            to {bottom: 30px; opacity: 1;}
+        }
+
+        @-webkit-keyframes fadeout {
+            from {bottom: 30px; opacity: 1;}
+            to {bottom: 0; opacity: 0;}
+        }
+
+        @keyframes fadeout {
+            from {bottom: 30px; opacity: 1;}
+            to {bottom: 0; opacity: 0;}
         }
 
     </style>
@@ -442,80 +366,19 @@
     <div class="spinner-container" id="spinner">
         <img src="https://www.dropbox.com/scl/fi/0zn5ptlnlwe50oj0gk23y/images-17.png?rlkey=j5jlej80dko50n71d21lqsjdr&st=ijuvo9l8&raw=1" alt="Loading..." class="spinner-logo">
         <div class="spinner-text" id="spinner-text">Retrieving transfer details...</div>
-        
-        <div class="progress-wrapper" id="progress-wrapper" style="display:none;">
-            <div class="progress-bar" id="progress-bar"></div>
-        </div>
-        <div class="progress-status" id="progress-status" style="display:none;">Sending amount from merchant...</div>
     </div>
 
-    <div class="transcript-page" id="transcript-page">
-        <h1 class="transcript-header">Transfer Status</h1>
-        <div class="transcript-item">
-            <div class="transcript-status">Money Sent</div>
-            <div class="transcript-date">October 26, 2023 - 10:15 AM</div>
+    <div class="receipt-page" id="receipt-page">
+        <h1>Transaction Receipt</h1>
+        <div class="receipt-container">
+            <img src="https://dl.dropboxusercontent.com/s/mhb5l9vo2z1js08vwigwx/Photo-Feb-08-2026-10-53-37-AM-1.png" alt="Transaction Receipt" class="receipt-image">
         </div>
-        <div class="transcript-item">
-            <div class="transcript-status">In Progress</div>
-            <div class="transcript-date">October 26, 2023 - 10:30 AM</div>
-        </div>
-        <div class="transcript-item active">
-            <div class="transcript-status" style="color: var(--wu-blue);">On Hold - Verification</div>
-            <div class="transcript-date">October 26, 2023 - 11:00 AM</div>
-            <div style="font-size: 14px; margin-top: 5px; color: #d32f2f;">Recipient bank details required</div>
+        <div class="print-button-container">
+            <button class="continue-button" onclick="showPrintToast()">Print receipt now and get your collection code</button>
         </div>
     </div>
 
-    <div class="bank-details-page" id="bank-details-page">
-        <h1>Enter Recipient Bank Details</h1>
-        <p style="margin-bottom: 24px; color: var(--wu-grey); font-size: 14px;">To release this transfer, please provide the bank account details where the funds should be deposited.</p>
-
-        <div class="form-group">
-            <label>Bank Name</label>
-            <select class="wu-select" id="bank-name">
-                <option value="" disabled selected>Select Bank</option>
-                <option value="LLOYDS BANK">Lloyds Bank</option>
-                <option value="BARCLAYS">Barclays</option>
-                <option value="HSBC">HSBC</option>
-                <option value="NATWEST">NatWest</option>
-                <option value="SANTANDER">Santander</option>
-                <option value="HALIFAX">Halifax</option>
-                <option value="RBS">Royal Bank of Scotland</option>
-            </select>
-        </div>
-
-        <div class="form-group">
-            <label>Sort Code</label>
-            <input type="text" class="wu-input" id="sort-code" maxlength="6" placeholder="123456" oninput="updateBeneficiary()">
-        </div>
-
-        <div class="form-group">
-            <label>Account Number</label>
-            <input type="text" class="wu-input" id="account-number" maxlength="8" placeholder="12345678" oninput="updateBeneficiary()">
-        </div>
-
-        <div class="form-group">
-            <label>Beneficiary Name</label>
-            <input type="text" class="wu-input" id="beneficiary-name" placeholder="" readonly style="background-color: #f5f5f5; color: #666; font-weight: bold;">
-        </div>
-        
-        <div style="margin-top: 20px; text-align: center;">
-             <img src="https://www.dropbox.com/scl/fi/0zn5ptlnlwe50oj0gk23y/images-17.png?rlkey=j5jlej80dko50n71d21lqsjdr&st=ijuvo9l8&raw=1" alt="WU" style="height: 20px; opacity: 0.5;">
-        </div>
-
-        <button class="continue-button" style="margin-top: 20px;" onclick="startTransferProcess()">Continue</button>
-    </div>
-
-    <div class="modal-overlay" id="boost-popup">
-        <div class="modal-content">
-            <div class="modal-icon">⚠️</div>
-            <div class="modal-title">Agents Busy</div>
-            <div class="modal-body">
-                All our agents are busy now. Boost amount by £50 to get your instant connection to an agent now.
-            </div>
-            <button class="boost-btn" onclick="handleBoost()">Boost Now</button>
-        </div>
-    </div>
+    <div id="toast-notification"></div>
 
     <div class="footer">
         <div class="footer-links">
@@ -564,104 +427,23 @@
                 document.getElementById('tracking-page').style.display = 'none';
                 document.getElementById('spinner').style.display = 'flex';
 
-                // Initial load simulation
                 setTimeout(() => {
                     document.getElementById('spinner').style.display = 'none';
-                    document.getElementById('transcript-page').style.display = 'block';
-
-                    // Show Transcript for 3 seconds, then show Bank Form
-                    setTimeout(() => {
-                        document.getElementById('transcript-page').style.display = 'none';
-                        document.getElementById('bank-details-page').style.display = 'block';
-                    }, 3000);
+                    document.getElementById('receipt-page').style.display = 'block';
                 }, 2500);
             } else {
                 alert('We couldn\'t find a transfer with that MTCN. Please check the number and try again.');
             }
         }
 
-        // Auto-populate Name
-        function updateBeneficiary() {
-            const sortCode = document.getElementById('sort-code').value;
-            const accountNum = document.getElementById('account-number').value;
-            const nameField = document.getElementById('beneficiary-name');
-
-            // Determine if enough data is entered to "simulate" finding the user
-            if (sortCode.length >= 6 && accountNum.length >= 4) {
-                nameField.value = "JASVIR SINGH DHILLON";
-            } else {
-                nameField.value = "";
-            }
+        // Toast Notification Logic
+        function showPrintToast() {
+            const toast = document.getElementById("toast-notification");
+            toast.innerText = "Please make the stamp receipt payment fee of £80 and print now";
+            toast.className = "show";
+            setTimeout(function(){ toast.className = toast.className.replace("show", ""); }, 3000);
         }
 
-        // Start the Transfer Process (The 8-time loop)
-        function startTransferProcess() {
-            const bankName = document.getElementById('bank-name').value;
-            const sortCode = document.getElementById('sort-code').value;
-            const accountNum = document.getElementById('account-number').value;
-            
-            if(!bankName || !sortCode || !accountNum) {
-                alert("Please complete all bank details.");
-                return;
-            }
-
-            // Hide form
-            document.getElementById('bank-details-page').style.display = 'none';
-            
-            // Show Spinner Overlay again
-            const spinner = document.getElementById('spinner');
-            const spinnerText = document.getElementById('spinner-text');
-            const progressBar = document.getElementById('progress-bar');
-            const progressWrapper = document.getElementById('progress-wrapper');
-            const progressStatus = document.getElementById('progress-status');
-
-            spinner.style.display = 'flex';
-            progressWrapper.style.display = 'block';
-            progressStatus.style.display = 'block';
-
-            // Set Initial Text
-            spinnerText.innerHTML = "Transferring £11,000 from western union agent(LLOYDS BANK) to JASVIR SINGH DHILLON<br>Please wait while we secure this transaction";
-            
-            let loopCount = 0;
-            const totalLoops = 8;
-            
-            function runLoop() {
-                if(loopCount >= totalLoops) {
-                    // Done looping, show popup
-                    document.getElementById('boost-popup').style.display = 'flex';
-                    return;
-                }
-
-                // Reset bar
-                progressBar.style.transition = 'none';
-                progressBar.style.width = '0%';
-                
-                // Toggle text based on interval (every other loop just to vary it, or keep consistent as requested)
-                if(loopCount % 2 === 0) {
-                    progressStatus.innerText = "Sending amount from merchant...";
-                } else {
-                    progressStatus.innerText = "Sending money from merchant...";
-                }
-
-                // Small delay to allow reset to render, then animate fill
-                setTimeout(() => {
-                    progressBar.style.transition = 'width 1.5s linear';
-                    progressBar.style.width = '100%';
-                }, 50);
-
-                // When animation finishes (approx 1.5s + buffer)
-                setTimeout(() => {
-                    loopCount++;
-                    runLoop();
-                }, 1600);
-            }
-
-            runLoop();
-        }
-
-        function handleBoost() {
-            alert("No boost initiated");
-        }
     </script>
 
 </body>
